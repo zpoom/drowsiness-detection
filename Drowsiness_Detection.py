@@ -11,17 +11,15 @@ def eye_aspect_ratio(eye):
 	ear = (A + B) / (2.0 * C)
 	return ear
 	
-thresh = 0.2
+thresh = 0.25
 frame_check = 20
 detect = dlib.get_frontal_face_detector()
-predict = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")# Dat file is the crux of the code
+predict = dlib.shape_predictor(".\shape_predictor_68_face_landmarks.dat")# Dat file is the crux of the code
 
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["left_eye"]
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["right_eye"]
 cap=cv2.VideoCapture(0)
 flag=0
-idx = 0
-sum_ear = 0
 while True:
 	ret, frame=cap.read()
 	frame = imutils.resize(frame, width=450)
@@ -39,13 +37,6 @@ while True:
 		rightEyeHull = cv2.convexHull(rightEye)
 		cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
 		cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
-		# if idx % 100 == 0:
-		# 	print('[Aspect ratio]', sum_ear/100)
-		# 	idx = 0
-		# 	sum_ear = 0
-
-		# idx += 1
-		# sum_ear += ear
 		if ear < thresh:
 			flag += 1
 			print (flag)

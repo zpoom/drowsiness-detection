@@ -24,6 +24,8 @@ frame_check = 20
 frame_count = 0
 sleep_counter = 0
 total_counter = 0
+avg_f_c = 0
+sum_ecr = 0
 detect = dlib.get_frontal_face_detector()
 # Dat file is the crux of the code
 predict = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
@@ -50,6 +52,7 @@ while True:
         cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
         cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
         total_counter += 1
+        avg_f_c += 1
 
         if frame_count % 15 == 0:
             sleep_counter = 0
@@ -57,11 +60,20 @@ while True:
             frame_count = 0
 
         ecr = eye_closure_ratio(sleep_counter, total_counter)
+        sum_ecr += ecr
+
+        if avg_f_c % 50 == 0:
+            print('sun 50 frame: '+str(sum_ecr/50))
+            avg_f_c = 0
+            sum_ecr = 0
+
+        if frame_count % 15 == 14:
+            print(ecr)
 
         if ear < ear_thresh:
             flag += 1
             sleep_counter += 1
-            print(flag)
+            # print(flag)
             # if flag >= frame_check or ecr > ecr_thresh:
             #     cv2.putText(frame, "****************ALERT!****************", (10, 30),
             #                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
